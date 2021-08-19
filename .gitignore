@@ -1,0 +1,14 @@
+.DS_Store
+Paper.pdf
+Paper.aux
+Paper.bbl
+Paper.blg
+Paper.log
+Paper.loc
+Paper.soc
+Paper.out
+Paper.synctex.gz
+PaperNotes.bib
+Literature/*
+!Literature/ArborVote.bib
+gitHeadLocal.gin

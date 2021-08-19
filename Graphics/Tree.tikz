@@ -1,0 +1,29 @@
+%!TEX root = ../Paper.tex
+\begin{tikzpicture}[
+	every node/.style = {draw,shape=rectangle,align=center,color=black,rounded corners=1mm},
+	level 1/.style={sibling distance=7.5em,level distance=4em},
+	level 2/.style={sibling distance=5em,level distance=4em},
+	level 3/.style={sibling distance=4em,level distance=4em},
+	root/.style = {dotted,color=gray,text=black},
+	pro/.style = {color=green},
+	con/.style = {color=red},
+	fact/.style = {dashed},
+	]
+	\node[root] {$\Root[0]$}
+	child[pro] { node {$\Arg[1]$\\\fbox{\footnotesize$\imp[1],\wgt[1]$}}
+		child[pro] { node {$\Arg[2]$\\\fbox{\footnotesize$\imp[2],\wgt[2]$}} }
+		child[con] { node {$\Arg[4]$\\\fbox{\footnotesize$\imp[4],\wgt[4]$}} }
+	}
+	child[pro] { node {$\Arg[3]$\\\fbox{\footnotesize$\imp[3],\wgt[3]$}} 
+		child { node[fact] {$\Fact[6]$\\\fbox{\footnotesize$\imp[6],\wgt[6]$}} }
+	}
+	child[con] { node {$\Arg[5]$\\\fbox{\footnotesize$\imp[5],\wgt[5]$}} }
+	child[con] { node {$\Arg[7]$\\\fbox{\footnotesize$\imp[7],\wgt[7]$}}
+		child[pro] { node {$\Arg[8]$\\\fbox{\footnotesize$\imp[8],\wgt[8]$}} 
+			child[con] { node[fact] {$\Fact[9]$\\\fbox{\footnotesize$\imp[9],\wgt[9]$}} }
+		}
+		child[con] { node {$\Arg[10]$\\\fbox{\footnotesize$\imp[10],\wgt[10]$}} }
+		child[con] { node {$\Arg[11]$\\\fbox{\footnotesize$\imp[11],\wgt[11]$}} } 
+	}
+	;
+\end{tikzpicture}
