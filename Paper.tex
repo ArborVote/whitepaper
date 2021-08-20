@@ -60,7 +60,7 @@ nofootinbib
 \newcommand{\tot}{\text{total}}
 \newcommand{\sib}{\text{siblings}}
 
-\newcommand{\T}{\text{T}}\newcommand{\debateTokens}{debate tokens}
+\newcommand{\T}{\text{T}}
 \newcommand{\Y}{\text{Y}}
 \newcommand{\N}{\text{N}}
 
@@ -94,7 +94,8 @@ This is the motivation behind ArborVote, a voting module for deliberative decisi
 \setlength{\parskip}{0.4em plus0.1em minus0.1em}
 
 \begin{acronym}
-	\acro{AMM}{automated marker maker}
+	\acro{AMM}{automated market maker}
+	\acro{CPMM}{constant product market maker}
 	\acro{PM}{prediction market}
 	\acro{RM}{rating market}
 	\acro{DAPP}{decentralized application}
@@ -191,10 +192,10 @@ A second requirement is Sybil protection.
 Curated registries of unique digital identities are already available on several blockchains. 
 % Incentivization
 A last and optional requirement is the ability to incentivize participation.
-Because the time and collective attention of the people is scarce resources,
+Because the time and collective attention of the people are scarce resources,
 the ability to allocate reputational or monetary rewards is useful
 and especially easy to realize in the form of blockchain tokens.
-To put this economic view in perspective:
+To put this rather economic view in perspective:
 One might see this deliberative decision-making as the decentralization of the job of politicians and consultants that are also getting paid.
 
 
@@ -211,7 +212,6 @@ Reversing this and incentivizig voters to consider different perspectives is not
 This can only be achieved if deliberating and weighting of the arguments is more favorable than steering the decision outcome towards one's own interests.
 }
 
-
 \deleted{
 \subsection{Trust assumptions}
 %\subsection{Blockchain Infrastructure}
@@ -223,16 +223,13 @@ The system is intended to be trustless---in other words: it can be used in a set
 
 \section{Structuring Debates in Argument Graphs}\label{sec:Structure}
 The reasoning behind making a decision is rarely linear. 
-Most of the time, debates consist of multiple, nested arguments
-forming threads forking off multiple times being directed towards the root node. 
-%
+Most of the time debates consist of numerous, interdependent arguments 
+originating from the root node and  branching off multiple times. 
 This results in a tree structure as depicted in \cref{fig:Tree},
-where arguments constitute the nodes of the tree.
-%
-Three node types exist in the debate graph: 
+where arguments \highlight{(or facts)} constitute the nodes in the tree.
+Three node types exist in this tree graph: 
 root, argument, and fact nodes. 
-Nodes without child-nodes below them are called leaves.
-
+Nodes without child nodes below them are called leaves.
 
 \begin{figure}
 	\resizebox{0.95\linewidth}{!}{
@@ -240,9 +237,9 @@ Nodes without child-nodes below them are called leaves.
 	}
 	\caption{
 		Visualization of a debate as an argument tree with 
-		the root node (dotted) $\Root$, 
-		argument nodes (solid) $\Arg$, and 
-		fact nodes (dashed) $\Fact$
+		the root node $\Root$ (dotted), 
+		argument nodes $\Arg$ (solid), and 
+		fact nodes $\Fact$ (dashed) 
 		numbered by their order of creation.
 		Nodes have an impact $\imp$ and a weight $\wgt$ relative to their siblings 
 		and can support or oppose their associated parent as indicated by green and red links, respectively.
@@ -252,38 +249,24 @@ Nodes without child-nodes below them are called leaves.
 
 
 \subsection{Root Nodes}
-The decision option forms the root $\Root$ of the tree and is expressed as a statement that will ultimately be
-%supported 
-approved 
-or 
-%opposed %
-disapproved 
-by the participants of the debate, e.g., 'We should execute process A.'. 
+The decision option forms the root $\Root$ of the tree and is expressed as a statement, 
+e.g., 'We should execute process A.', 
+that can be \replaced{approved}{supported} or \replaced{disapproved}{opposed} by the participants of the debate in the voting process.
 %
-To facilitate multiple decision options, multiple trees can be constructed%
----all of them having their own root statement, e.g., 'We should execute process B.', etc.).
+To facilitate multiple decision options, 
+multiple trees can be constructed---all of them having their own root statement, 
+e.g., 'We should execute process B.'.
 
 \subsection{Argument Nodes}
-%\todo{
-%	People can create arguments $\Arg[i][k]$, $k>0$.
-%	An argument $\Arg[i][k]$ can have multiple child arguments
-%	whose indices we collect in the set $\Children[i][k]=\{c_1, c_2, \dots\}$.
-%	Likewise, we collect the indices of its direct siblings in the set $\Siblings[i][k]=\{s_1, s_2, \dots\}$.
-%}
-%\todo{Clarify}
 Participants of the debate can create arguments $\Arg$ below the root
 or other arguments. 
 %
 Within a debate, each argument points to one parent node (either the root or another argument) it is referring to. 
 
-
-To identify each node $\Node$ in the tree, we introduce the notation $\Node[i][p]$
+To identify each node $\Node$ in the tree, the notation $\Node[i][p]$ is used, 
 where $i$ and $p$ are unique identifiers of the argument itself and its parent, respectively.
 For convenience, we define the set containing the identifiers of all children and siblings of a node $\Node[i][p]$ by $\Children[i]$ and $\Siblings[i]\equiv\Children[p]$
 
-%Depending on if one argument can point to one or multiple other nodes,
-%this results in a tree graph or a directed acyclic graph.
-%\todo{Jede verlinkung/edge ist ein eigener Rating market}
 
 \subsection{Fact Nodes}
 Facts can be pro or con as well but no other node can point to them. 
@@ -292,38 +275,17 @@ and naturally form the leaves of the tree.
 Examples for fact nodes are scientific, peer reviewed articles,
 or other curated information, e.g. from decentralized oracles such as \href{https://reality.eth.link/}{reality.eth}, \href{https://chain.link/}{Chainlink}, or other trustworthy sources of information.
 
-%or links to a curated knowledge graph (see the underlay \cite{UNDERLAY}).
-
-
-%\subsection{Establishing a Link to the Knowledge Graph}
-%\cite{Hogan2020}
-%Rational decision-making:
-%establish a link between the decision and knowledge by a directed argument graph.
-%
-%-> this derives important features
-%The longer the argument chain, the less influence has the knowledge
-%
-%%OR - curation of arguments
-
 % Reuse in Multiple Debates
 Although argument and fact nodes can point to only one parent argument per debate,
 they and their associated sub-trees can be reused in multiple debates.
 
-%\begin{figure*}
-%	Stakeholders
-%	\caption{Text}
-%	\label{fig:Tree}
-%\end{figure*}
-
-
 
 \section{Phases, Stakeholders, and Stakes of the Debate}\label{sec:DebatingProcess}
-
-% Motivate formalization before?
+\todo{Motivate formalization before?}
 
 The decision-making process in ArborVote consists of three phases:
 \begin{enumerate}[noitemsep]
-	\item editing (with an grace period for each author subtree)
+	\item editing
 	\item rating
 	\item tallying
 \end{enumerate}
@@ -338,16 +300,16 @@ In the following, these roles are briefly presented.
 Debaters author arguments or fact nodes and add them to the debate tree.
 Curators can flag and propose edits to the content that authors can accept or reject.
 In the latter case, a dispute is raised that is resolved by jurors in a digital court.
-Lastly, voters can invest \debateTokens{} to rate the impact of nodes in the debate tree.
+Lastly, voters can invest debate tokens to rate the impact of nodes in the debate tree.
 To maintain neutrality, jurors are excluded from the other roles.
 
 % Debate Tokens
 \todo{Move elsewhere}
 In this system, 
-each participant has a predefined amount of \debateTokens{} $\T$ that can only be spend within the debate.
+each participant has a predefined amount of debate tokens $\T$ that can only be spend within the debate.
 These are either distributed equally among the participants or based on the reputation in the \ac{DAO}.
 %
-Participants can spend the \debateTokens{} 
+Participants can spend the debate tokens 
 to create, curate, and rate arguments.
 %
 The system rewards participants behaving deliberate- and constructively in the debate
@@ -361,7 +323,7 @@ To allow others to consider the argument and to prevent duplicates, it is immedi
 
 Within a predefined grace-period, an argument owner can edit the argument or post sub-nodes, 
 whereas other participants cannot.
-However, other participants can suggest edits, moving, or removal of the argument in which case they are called curators.
+However, other participants can suggest edits, moving, or removal of the arguments and are thus called curators.
 
 The editing of the author includes 
 \begin{itemize}[noitemsep]
@@ -379,43 +341,38 @@ This finalization allows other debaters to support or oppose the finalized argum
 %Despite suggesting edits or removal of arguments,
 Disputes about argument ownership might arise, 
 if duplicates or very similar statements are present in different parts of the tree.
-%
-Curators can flag nodes that contain
-\begin{itemize}[noitemsep]
-\item plagiarism, 
-\item spam, or 
-\item offensive content such as hate-speech or sexism.
-\end{itemize}
-
-These participants are called curators and have to lock up a deposit, 
-i.e, tokens that have monetary value and are not \debateTokens{}, 
-in order to raise a dispute. 
-If the argument author agrees with the accusation, he/she can remove the argument \replaced{and pac only a small}{without any} penalty \added{to the curator}.
+Curators can flag nodes containing 
+plagiarism, 
+spam, or 
+offensive content such as hate-speech or sexism. 
+In order to raise a dispute, 
+curators have to lock up a deposit, 
+i.e, tokens that have monetary value and are not debate tokens. 
+If the argument author agrees with the accusation, he/she can remove the argument \replaced{and pay only a small}{without any} penalty of the deposited debate tokens \added{to the curator}. 
 If not, the author has to match the deposit and the dispute is escalated to a digital court such as \href{https://kleros.io/}{Kleros Court}\cite{Lesaege2019,Lesaege2021} or \href{https://anj.aragon.org/}{Aragon Court}\cite{Cuende2019}.
 
 Depending on the court decision, the node either remains in the tree or is deleted.
-As a result, either the creator or curator loses the deposit, which is then split between the opposing side and the jurors. \todo{What happens to the debate tokens? Curator gets them but cannot spend them - used for reputation rewards in the end}
+As a result, either the creator or curator loses the deposit, which is then split between the opposing side and the jurors. 
+\todo{What happens to the debate tokens? Curator gets them but cannot spend them - used for reputation rewards in the end}
 
 
 \subsection{Rating Phase}\label{sec:RatingPhase} % Voting Phase
-
 After the editing phase ended and the argument tree is completely finalized,
 the debate enters the rating phase---the actual voting process.
 
 % challenge
 % Design rationale
-\highlight{The key game-theoretical challenge} here is to incentivize the participants to 
+\highlight{The key challenge} here is to incentivize the participants to 
 rate the impact $\imp$ of an argument or fact node
-and to decouple it from the individual outcome preference or in simple terms: to eliminate tactical voting.
+and to decouple it from the individual outcome preference. 
+In simple terms: to eliminate tactical voting.
 Voting solely with the goal to influence the decision should be a unprofitable long-term strategy.
 
-\todo{How is the design rational achieved?}
 % Rating markets
 This design rationale can be achieved by employing a market mechanism---we call this a \ac{RM}.
 %This impact is determined separately for each argument via a market mechanism that we call \ac{RM}.
 A \ac{RM} is a slightly modified \ac{PM} such as the \href{https://omen.eth.link/}{Omen \ac{PM}}\cite{Omen2020} and also uses an \ac{AMM}\cite{Zhang2018} for liquidity provision.
-
-Participants can spend their \debateTokens{} to invest in approval or disapproval shares $\Y$ and $\T$
+Participants can spend their debate tokens to invest in approval or disapproval shares $\Y$ and $\N$
 \deleted{being minted at the current market ratio}.
 These participants are called voters.
 
@@ -431,22 +388,14 @@ Accordingly, the less approval shares $r^\Y$ are available at the market, the hi
 
 % PM contrast
 In contrast to a conventional \ac{PM} where all shares except that of the correctly predicted outcome (determined by an oracle) are invalidated after the market close,
-all shares maintain their last value and are redeemed for \debateTokens. 
+all shares maintain their last value and are redeemed for debate tokens. 
 \todo{How to prevent unwanted dynamics shortly before the market close?}
 % Arbitrage
-%\replaced{
-%	In said system, voters can spend their \debateTokens{} $\T$
-%	and swap them for approval ($\Y$) or disapproval ($\N$) shares on the argument market.
-%	Depending on if the \ac{RM} has moved in the opposite direction at the point if its close, 
-%	participants gain or lose tokens.
-%		This is can be a profitable or unprofitable trade.
-%}{
-	Accordingly, voters who buy approval or disapproval shares of under- or overrated arguments that turn out to be rated higher or lower at the market close, respectively, make a profit in \debateTokens.
-%}
+Accordingly, voters who buy approval or disapproval shares of under- or overrated arguments that turn out to be rated higher or lower at the market close, respectively, make a profit in debate tokens.
 
 % Liquidity provision by the author
-The liquidity of the \ac{AMM} is provided by the author of the argument who has to deposit \debateTokens{} at the point of the creation of the argument.
-Moreover, the author determines the initial amount of the approval and disapproval shares $r^\Y$ and $r^\N$ minted from the \debateTokens{} at the market start
+The liquidity of the \ac{AMM} is provided by the author of the argument who has to deposit debate tokens at the point of the creation of the argument.
+Moreover, the author determines the initial amount of the approval and disapproval shares $r^\Y$ and $r^\N$ minted from the debate tokens at the market start
 and therefore the initial impact $\imp$.
 If the argument creator does not specify a ratio, 
 the amount of approval and disapproval tokens is set with $r^\Y=r^\N=\nicefrac{1}{2}\,r^\T$. 
@@ -472,17 +421,10 @@ Debating and voting solely with the goal to influence the decision is an unprofi
 as the actors end up with \highlight[comment={How to proof this?}]{less vote tokens than the average participant.}
 \todo{Discuss in more detail.}
 
-
 % Tallying
 In the subsequent tallying phase,
 the impact value $\imp$ determined by the markets is tallied up,
 which is described in the following section.
-
-
-
-
-
-
 
 
 \subsection{Tallying Phase}\label{sec:TallyingPhase}
@@ -493,10 +435,10 @@ We define the weight of a node $\Node[i]$ by
 	\wgt[i][\Siblings] = \frac{\liq[i]}{\sum_{j\in \Siblings[i]}\liq[j]}
 \end{equation}
 as the 
-amount of \debateTokens{} spent on node $\Node[i]$, $\liq[i]$,
+amount of debate tokens spent on node $\Node[i]$, $\liq[i]$,
 in relation to all its siblings $\Siblings[i]$.
 
-to the total number of deposited \debateTokens{} of its siblings.
+to the total number of deposited debate tokens of its siblings.
 This allows for expressing the impact of a node $\Node[i]$ 
 \begin{equation}\label{eq:Impact}
 	\imp[i] = 
@@ -514,24 +456,26 @@ The $\max$ operator ensures, that the impact value cannot become negative.
 
 
 The first term $\impOwn[i]$ is the nodes own impact determined directly from the associated \ac{RM}.
-The other term contains the impact influence exerted by the children nodes
+The other term contains the weight-averaged impact of all children nodes 
 \begin{equation}
-	\imp[i][\Children] = \sum_{j\in \Children[i]} \supportive[j][i] \imp[j]\,\wgt[j][\Siblings],
+	\imp[i][\Children] = \sum_{j\in \Children[i]} \supportive[j]%[i] 
+	\imp[j]\,\wgt[j][\Siblings].
 \end{equation}
-being weight-averaged by the sibling-weight impact of all children nodes
-\deleted{which recurses from the root to the leaf level of the argument tree,}.
-and a prefactor
+with the prefactor
 \begin{equation}
-	\supportive[j][i]=
+	\supportive[j]%[i]
+	=
 	\begin{cases}
-		+1 & \text{if node $j$ supports node $i$}\\
-		-1 & \text{if node $j$ \,opposes\, node $i$}\\
+		+1 & \text{if node $j$ is supporting}\\ %node $i$}\\
+		-1 & \text{if node $j$ is opposing} %\, node $i$}\\
 	\end{cases},
 \end{equation}
-leading to the subtraction of impact, if the node is opposing.
+resulting in the subtraction of impact, if the associated node is opposing.
 % Mixing
-Both terms are scaled with the mixing parameter $\gamma$.
-The higher the value of $\gamma$, the more influence the children nodes have on $\imp[i]$
+Both terms are scaled with the mixing parameter $\mixing$.
+The higher the value of $\mixing$, the more influence the children nodes have on $\imp[i]$.
+Because the influence of a single node on the decision outcome decreases with increasing distance from the tree root, 
+it becomes less attractive to add too many layers to the tree, which incentivizes keeping debates short.
 
 Special cases arise for the different node types in the tree:
 \begin{equation}
@@ -543,25 +487,24 @@ Special cases arise for the different node types in the tree:
 	\end{cases}
 \end{equation}
 % root
-For the root node, the impact is solely determined from the children's approval  ($\mixing=1$).
+For the root node, the impact is solely determined from the child impacts  ($\mixing=1$).
 % leaf
 For a leaf node, the impact is determined solely from its own rating market ($\mixing=0$).
 % all others
 For all other nodes,
-the ratio between the two is defined by to a constant $k\in[\nicefrac{1}{2},1)$.
+the ratio between the two is defined by constant $k\in[\nicefrac{1}{2},1)$ specified by the debate creator.
 
 
 \todo{Add example.\\ 
-For example with $k=\nicefrac{3}{4}$...}
+For example with $k=\nicefrac{3}{4}$...
+}
 
 
 \todo{
 \section{Incentive Structures}\label{sec:Incentives}
 % Creation
-
 \subsection{Rewards}
 - debate summoner has to offer rewards (either reputation or money)
-
 - rewards are split between participants that performed above average
 }
 
@@ -570,7 +513,7 @@ For example with $k=\nicefrac{3}{4}$...}
 In the following, different attack scenarios and means for mitigation are discussed.
 
 \subsection{Spamming Attacks}
-The number of nodes that can be created is limited by the number of \debateTokens{} and
+The number of nodes that can be created is limited by the number of debate tokens and
 curators can remove the spam nodes.
 
 \subsection{Ownership Attacks}
@@ -578,14 +521,14 @@ Duplicates and plagiarism can be identified by  curators via the nodes time-stam
 or ultimately decided by jurors in a court.
 
 \subsection{Sybil-Attacks}
-Ensure that users are real humans by employing curated registries such as \href{https://proofofhumanity.id/}{Proof of Humanity}.
+Curated registries such as \href{https://proofofhumanity.id/}{Proof of Humanity}
+ensure that only real humans participate.
+
 
 \subsection{Collusion}
-Todo
-\todo{
-	What types of collusion are possible and
-	can they be prevented by utilizing \ac{MACI}?
-}
+Collusion (such as bribery or blackmailing) is still an open problem in decentralized governance.
+However, it can be solved in the future if \ac{MACI}\cite{Buterin2021} becomes available.
+In the context of ArborVote this means that the debate participants remain secret and cannot proof to each other that they have created or voted for a certain tree node.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -608,25 +551,9 @@ are gratefully acknowledged.
 \section*{Appendix}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
 \subsection*{Rating Markets}\label{sec:RatingMarkets}
-
-An \ac{AMM} is used to provide liquidity for the rating markets.
-
-\todo{
-	Contrast to \ac{PM}:
-	half as many shares are minted so that one share is allocated for each \highlight{collateralized} \debateTokens
-	instead of two.
-}
-
-\todo{
-	This impact of each node is influenced by two quantities:
-	the approval $\imp$ and \highlight{weight} $\wgt$.
-}
-
-
-The argument creator uses $r^\T$ \debateTokens{} 
+An \ac{AMM}, more specifically a \ac{CPMM}, is used to provide liquidity for the rating markets.
+The argument creator deposits $r^\T$ debate tokens 
 to mint 
 $r^\Y$ approval ($\Y$) and 
 $r^\N$ disapproval ($\N$) shares
@@ -639,36 +566,31 @@ so that
 \begin{equation}
 	r^\Y+r^\N = \liq.
 \end{equation}
-The $Y$ and $N$ tokens form a trading pair
-that has to maintain a constant value
+The $\Y$ and $\N$ tokens form a trading pair
+whose product has to remain constant
 \begin{equation}
-	k = r^\Y\cdot r^\N
+	k = r^\Y\cdot r^\N.
 \end{equation}
 
-If a voter invests \debateTokens{} to buy, e.g., approval shares,
+If a voter invests debate tokens to buy, e.g., approval shares,
 both share types are minted at the \highlight{current} \ac{AMM} ratio of $r^\Y: r^\N$.
 Then, the unwanted shares are sold at the \ac{AMM} for the wanted share type, 
 which is the same implementation as in 
 \href{https://omen.eth.link/}{Omen \acp{PM}}\cite{Omen2020}.
-\todo{
-	%Use this for curators that suggest edits?
-	The value k can change if more LPs join
-	\begin{equation}
-		\sum_i w_i \, p_i = k
-	\end{equation}
-}
 An example is depicted in \cref{fig:RatingMarket}.
 \begin{figure*}
 	\includegraphics[width=0.75\textwidth]{Graphics/RatingMarket.pdf}
 	\caption{Process flow diagram in a rating market showing
-	(1) liquidity provision by the argument creator Carl with a ratio of $r^\Y:r^\N=1$
+	1.) liquidity provision by the argument creator Carl with a ratio of $r^\Y:r^\N=1$
 	and 
-	(2,3) two consecutive market trades by Alice and Bob where each of them buys approval shares for an equivalent of 2\,\T{} on the underlying \ac{AMM}.
+	two consecutive market trades by 
+	2.) Alice and 
+	3.) Bob where each of them buys approval shares for an equivalent of 2\,\T{} on the underlying \ac{CPMM}.
 	After the market close, 
 	Alice and Bob redeem their approval shares \Y{} for \num[round-mode=places,round-precision=1]{2.534597515403166}
 	and
 	\num[round-mode=places,round-precision=1]{2.0801261686545804}
-	\debateTokens{} \T{}, thus generating profit.
+	debate tokens \T{}, thus generating profit.
 	Carl redeems his \Y{} and \N{} shares for
 	$\num[round-mode=places,round-precision=1]{4.813525792017222}\,\T
 	+\num[round-mode=places,round-precision=1]{4.571750523925031}\,\T
