@@ -31,6 +31,7 @@ nofootinbib
 	inline,
 	disable
 }{}
+
 \usepackage{draftwatermark}
 \SetWatermarkText{DRAFT}
 \SetWatermarkScale{1}
@@ -47,8 +48,8 @@ nofootinbib
 \newcommandx{\Siblings}[2][1={},2={}]{\mathcal{S}\dec[#1][#2]}
 
 \newcommandx{\wgt}[2][1={},2={}]{w\dec[#1][#2]}
-\newcommandx{\imp}[3][1={},2={},3={}]{I\dec[\ifthenelse{\equal{#3}{}}{}{#3,}#1][#2]}
-\newcommandx{\impOwn}[3][1={},2={},3={}]{I'\dec[\ifthenelse{\equal{#3}{}}{}{#3,}#1][#2]}
+\newcommandx{\imp}[3][1={},2={},3={}]{r\dec[\ifthenelse{\equal{#3}{}}{}{#3,}#1][#2]}
+\newcommandx{\impOwn}[3][1={},2={},3={}]{r'\dec[\ifthenelse{\equal{#3}{}}{}{#3,}#1][#2]}
 \newcommandx{\liq}[2][1={},2={}]{n^{\T}\dec[#1][#2]}
 
 \newcommandx{\mixing}[2][1={},2={}]{\gamma\dec[#1][#2]}
@@ -150,7 +151,7 @@ Populists can take advantage of the situation by influencing voters with misinfo
 
 % Deliberative Democracy
 Instead of expressing preferences for specific decisions options directly, 
-deliberative democracy tries to find consensus on the best decision option based on deliberation, reasoning, and weighting of the individual aspects of the decision spectrum in a debate.
+deliberative democracy tries to find consensus on the best decision option based on the exchange and weighting of arguments in a debate.
 This way, the reasoning behind the different decision options becomes transparent to the participants and the public.
 % Debates
 Traditional debates are often held linearly---either in a podium discussion or in a forum.
@@ -368,12 +369,13 @@ These participants are called voters.
 
 % Impact signal
 The amount of approval and disapproval shares $n^\Y$ and $n^\N$ in the \ac{AMM}
-signals the impact as a scalar value between $0$ and $1$
+signals the impact as a scalar value between $-1$ and $+1$
 \begin{equation}
-	\imp = 1-\frac{n^\Y}{n^\Y+n^\N},
+	\imp = 1-2\,\frac{n^\Y}{n^\Y+n^\N},
 \end{equation}
-where the second term corresponds to the relative share of $\Y$ tokens available at the market.
+where the fraction corresponds to the relative share of $\Y$ tokens available at the market.
 Accordingly, the less approval shares $n^\Y$ are available at the market, the higher the impact $\imp$.
+Arguments with negative impact values (in other words bad arguments) are not considered in the tallying phase later.
 
 
 % PM contrast
@@ -385,22 +387,18 @@ Accordingly, voters who buy approval or disapproval shares of under- or overrate
 
 % Liquidity provision by the author
 The liquidity of the \ac{AMM} is provided by the author of the argument who has to deposit debate tokens at the point of the creation of the argument.
-Moreover, the author determines the initial amount of the approval and disapproval shares $n^\Y$ and $n^\N$ minted from the debate tokens at the market start
-and therefore the initial impact $\imp$.
-If the argument creator does not specify a ratio, 
-the amount of approval and disapproval tokens is set with $n^\Y=n^\N=\nicefrac{1}{2}\,n^\T$. 
+% Initial impact
+Moreover, the author can chose an initial impact $\imp\in (0,1)$ with $\nicefrac{1}{2}$ being the default.
+The initial impact determines the initial amount of the approval and disapproval shares $n^\Y$ and $n^\N$ minted from the debate tokens at the market start.
+The value $\imp=1$ is excluded because this would result in $n^\Y=0$ and thus a vanishing constant product $n^\Y\times n^\N$.
 % Fees and Permanant Loss
-As in every \ac{AMM}, liquidity providers (here the author \todo{and editors of the argument})
-earn fees of traders (here voters)
+As in every \ac{AMM}, liquidity providers (here the authors\todo{ and editors of the argument})
+earn fees from traders (here voters)
 and 
 take the risk of suffering permanent loss, if the market diverges from the initial value.
 This incentivizes authors to evaluated their own arguments impact critically 
 \deleted[comment={Should the final earning/loss be related to $\imp$ or $\impOwn$}]{and to take also related child arguments into account}
 to minimize permanent loss. 
-% Initial impact
-To disincentivizes debaters to create bad arguments and earn on the fees,
-the initial ratio is limited to $[\nicefrac{1}{2},1)$ (or even a more conservative lower limit $>\nicefrac{1}{2}$).
-The value $\imp=1$ is excluded because otherwise, the constant product $\Y\times \N = 0$.
 % RM details
 The details of the rating market mechanics are discussed in detail in \cref{sec:RatingMarkets}
 
@@ -419,57 +417,69 @@ which is described in the following section.
 
 \subsection{Tallying Phase}\label{sec:TallyingPhase}
 In the tallying phase, the impact of the different nodes is accumulated and weighted.
-We define the weight of a node $\Node[i]$ by
-\begin{equation}
-	\wgt[i] = \frac{\liq[i]}{\liq[i]+\sum_{j\in \Siblings[i]}\liq[j]}
-\end{equation}
-as the amount of debate tokens spent $\liq[i]$ relative to its siblings $\Siblings[i]$.
-
-to the total number of deposited debate tokens of its siblings.
 This allows for expressing the impact of a node $\Node[i]$ by
 \begin{equation}\label{eq:Impact}
 	\imp[i] = 
-	\max
-	\left[\vphantom{\sum}\right.
-	0
-	\,,\,
 	\underbrace{(1-\mixing[i])\cdot\impOwn[i]}_{\text{own}} 
 	+
-	\underbrace{\mixing[i]\cdot\imp[i][\Children]}_{\text{children}}
-\left.\vphantom{\sum}\right],
+	\underbrace{\mixing[i]\cdot\imp[i][\Children]}_{\text{children}},
 \end{equation}
-as two terms scaled with a mixing parameter $\mixing[i]$.
-The $\max$ operator ensures that the overall impact value cannot become negative.
-
+as two terms scaled with a mixing parameter $\mixing[i]\in(0,1)$.
+The higher the value of $\mixing$, the more important the second term becomes.
+\\
 The first term contains the nodes own impact $\impOwn[i]$ being determined directly from the associated \ac{RM}.
-The second term contains the weight-averaged impact of all children nodes 
+The second term contains the weight-averaged impact of all relevant child nodes
 \begin{equation}
-	\imp[i][\Children] = \sum_{j\in \Children[i]} \supportive[j]%[i] 
-	\imp[j]\,\wgt[j].
+	\imp[i][\Children] = \sum_{
+		\substack{
+			j\in \Children[i]\\
+			\imp[j] > 0
+		}
+	}
+	\supportive[j]\,\wgt[j]\,\imp[j],
 \end{equation}
-with the pre-factor
+and the pre-factor
 \begin{equation}
-	\supportive[j]%[i]
+	\supportive[j]
 	=
 	\begin{cases}
 		+1 & \text{if node $j$ is supporting}\\
 		-1 & \text{if node $j$ is opposing}
 	\end{cases},
 \end{equation}
-resulting in the subtraction of impact, if the associated node opposes its parent.
+resulting in the loss of impact, if the associated node opposes its parent 
+and the weight of a node $\Node[i]$
+\begin{equation}
+	\wgt[i] = \frac{\liq[i]}{\liq[i]+\displaystyle\sum_{
+		\substack{
+			j\in \Siblings[i]\\
+			\imp[j] > 0
+		}
+	}
+	\liq[j]}
+\end{equation}
+as the amount of debate tokens $\liq[i]$ spent relative to its siblings $\Siblings[i]$.
+The condition $\imp[j] > 0$ takes care that arguments with negative impact (bad arguments) are not considered.
+\\
 % Mixing
-Both terms are scaled with the mixing parameter $\mixing$.
-The higher the value of $\mixing$, the more influence the children nodes have on $\imp[i]$.
-Because the influence of a single node on the decision outcome decreases with increasing distance from the tree root, 
+Because of the mixing parameter $\gamma$ influence of a single node on the decision outcome decreases with increasing distance from the tree root, 
 it becomes less attractive to add too many layers to the tree, which incentivizes keeping debates short.
+
+An example is depicted in \cref{fig:VoteTallying}.
+\begin{figure}
+	\includegraphics[width=0.99\linewidth]{Graphics/VoteTallying.pdf}
+	\caption{Schematice visualization of a vote tally in an argument subtree.}
+	\label{fig:VoteTallying}
+\end{figure}
+
 
 Special cases arise for the different node types in the tree:
 \begin{equation}
 	\mixing[i] =
 	\begin{cases}
-		1 & \text{if $\Node[i]$ is root ($i=0$)}\\
-		0 & \text{if $\Node[i]$ is leaf}\\
-		k \in[\nicefrac{1}{2},1) & \text{else}
+		1 & \text{if node $i$ is the root ($i=0$)}\\
+		0 & \text{if node $i$ is a leaf}\\
+		c \in(0,1) & \text{else}
 	\end{cases}
 \end{equation}
 % root
@@ -478,8 +488,11 @@ For the root node, the impact is solely determined from the child impacts  ($\mi
 For a leaf node, the impact is determined solely from its own rating market ($\mixing=0$).
 % all others
 For all other nodes,
-the ratio between the two is defined by constant $k\in[\nicefrac{1}{2},1)$ specified by the debate creator.
+the ratio between the two is defined as a constant $c\in(0,1)$ being specified by the debate creator.
 
+
+If the impact of the root node $I_0$ resulting from its childrens is $>\nicefrac{1}{2}$, 
+the proposal is accepted and executed.
 
 \todo{Add example.\\ 
 For example with $k=\nicefrac{3}{4}$...
@@ -516,20 +529,38 @@ Collusion (such as bribery or blackmailing) is still an open problem in decentra
 However, it can be solved in the future if \href{https://ethresear.ch/t/minimal-anti-collusion-infrastructure/5413}{\ac{MACI}}\cite{Buterin2021} becomes available.
 In the context of ArborVote this means that the debate participants remain secret and cannot proof to each other that they have created or voted for a certain tree node.
 
+\begin{figure*}
+	\includegraphics[width=0.75\textwidth]{Graphics/RatingMarket.pdf}
+	\caption{Process flow diagram in a rating market showing
+		1.) liquidity provision of 10\,\T{} by the argument creator Carl with a ratio of $n^\Y:n^\N=1$
+		and 
+		two consecutive market trades by 
+		2.) Alice and 
+		3.) Bob where each of them buys approval shares for an equivalent of 2\,\T{} on the underlying \ac{CPMM}.
+		After the market close, 
+		Alice and Bob redeem their approval shares \Y{} for \num[round-mode=places,round-precision=1]{2.534597515403166}
+		and
+		\num[round-mode=places,round-precision=1]{2.0801261686545804}
+		debate tokens \T{}, thus generating profit.
+		Carl redeems his \Y{} and \N{} shares for
+		$\num[round-mode=places,round-precision=1]{4.813525792017222}\,\T
+		+\num[round-mode=places,round-precision=1]{4.571750523925031}\,\T
+		=\num[round-mode=places,round-precision=1]{9.3852763159}\,\T$, thus suffering a loss.
+	}
+	\label{fig:RatingMarket}
+\end{figure*}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgments}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%This work was generously supported by ETH Research Grant ETH-20 15-1 and ETH Pioneer Fellowship Grant PIO-11-14-2.
 
 Discussions
 with 
 James Simbouras,
 \highlight{Dan13ram},
 Daniel Ospina,
-Matt Prewitt, 
-Manu Flores,
+Matt Prewitt, and 
+Manu Flores
 are gratefully acknowledged.
 
 
@@ -564,32 +595,12 @@ Then, the unwanted shares are sold at the \ac{AMM} for the wanted share type,
 which is the same implementation as in 
 \href{https://omen.eth.link/}{Omen \acp{PM}}\cite{Omen2020}.
 An example is depicted in \cref{fig:RatingMarket}.
-\begin{figure*}
-	\includegraphics[width=0.75\textwidth]{Graphics/RatingMarket.pdf}
-	\caption{Process flow diagram in a rating market showing
-	1.) liquidity provision by the argument creator Carl with a ratio of $n^\Y:n^\N=1$
-	and 
-	two consecutive market trades by 
-	2.) Alice and 
-	3.) Bob where each of them buys approval shares for an equivalent of 2\,\T{} on the underlying \ac{CPMM}.
-	After the market close, 
-	Alice and Bob redeem their approval shares \Y{} for \num[round-mode=places,round-precision=1]{2.534597515403166}
-	and
-	\num[round-mode=places,round-precision=1]{2.0801261686545804}
-	debate tokens \T{}, thus generating profit.
-	Carl redeems his \Y{} and \N{} shares for
-	$\num[round-mode=places,round-precision=1]{4.813525792017222}\,\T
-	+\num[round-mode=places,round-precision=1]{4.571750523925031}\,\T
-	=\num[round-mode=places,round-precision=1]{9.3852763159}\,\T$, thus suffering a loss.
-}
-	\label{fig:RatingMarket}
-\end{figure*}
-
+\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\section*{References}
+\section*{References}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\bibliographystyle{plainnat}
+\bibliographystyle{plainnat}%
 \bibliography{Literature/ArborVote}
 
 \end{document}
