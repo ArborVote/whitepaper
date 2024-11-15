@@ -32,10 +32,10 @@ nofootinbib
 	disable
 }{}
 
-\usepackage{draftwatermark}
-\SetWatermarkText{DRAFT}
-\SetWatermarkScale{1}
-\SetWatermarkColor[gray]{0.75}
+%\usepackage{draftwatermark}
+%\SetWatermarkText{DRAFT}
+%\SetWatermarkScale{1}
+%\SetWatermarkColor[gray]{0.75}
 
 \newcommandx{\dec}[2][1={},2={}]{_{#1}
 		\ifthenelse{\equal{#2}{}}{}{^{#2}}
@@ -369,11 +369,11 @@ These participants are called voters.
 
 % Impact signal
 The amount of approval and disapproval shares $n^\Y$ and $n^\N$ in the \ac{AMM}
-signals the impact as a scalar value between $-1$ and $+1$
+signals the impact as a scalar value between $0$ and $1$
 \begin{equation}
-	\imp = 1-2\,\frac{n^\Y}{n^\Y+n^\N},
+	\imp = 2\,\frac{n^\N}{n^\Y+n^\N}-1,
 \end{equation}
-where the fraction corresponds to the relative share of $\Y$ tokens available at the market.
+where the fraction corresponds to the relative share of $\N$ tokens available at the market.
 Accordingly, the less approval shares $n^\Y$ are available at the market, the higher the impact $\imp$.
 Arguments with negative impact values (in other words bad arguments) are not considered in the tallying phase later.
 
@@ -403,16 +403,16 @@ to minimize permanent loss.
 The details of the rating market mechanics are discussed in detail in \cref{sec:RatingMarkets}
 
 % Design Rational
-In summary, these mechanics incentivize, both, the debaters and voters, to consider and multiple arguments and perspectives.
+In summary, these mechanics incentivize, both, the debaters and voters, to consider multiple arguments and perspectives.
  
 Debating and voting solely with the goal to influence the decision is an unprofitable \deleted{long-term} strategy resulting
 as the actors end up with \highlight[comment={How to proof this?}]{less vote tokens than the average participant.}
 \todo{Discuss in more detail.}
 
 % Tallying
-In the subsequent tallying phase,
-the impact value $\imp$ determined by the markets is tallied up,
-which is described in the following section.
+%In the subsequent tallying phase,
+%the impact value $\imp$ determined by the markets is tallied up,
+%which is described in the following section.
 
 
 \subsection{Tallying Phase}\label{sec:TallyingPhase}
@@ -565,10 +565,10 @@ are gratefully acknowledged.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Appendix}
+\section{Appendix}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection*{Rating Markets}\label{sec:RatingMarkets}
+\subsection{Rating Markets}\label{sec:RatingMarkets}
 An \ac{AMM}, more specifically a \ac{CPMM}, is used to provide liquidity for the rating markets.
 The argument creator deposits $n^\T$ debate tokens 
 to mint 
